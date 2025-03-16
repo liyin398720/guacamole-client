@@ -177,10 +177,6 @@
                     "options" : [ "", "reconnect", "display-update" ]
                 },
                 {
-                    "name"  : "secondary-monitors",
-                    "type"  : "NUMERIC"
-                },
-                {
                     "name"    : "read-only",
                     "type"    : "BOOLEAN",
                     "options" : [ "true" ]

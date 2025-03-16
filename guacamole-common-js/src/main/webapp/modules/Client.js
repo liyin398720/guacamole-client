@@ -333,15 +333,21 @@ Guacamole.Client = function(tunnel) {
      * 
      * @param {!number} monitors
      *     The count of monitors.
+     * 
+     * @param {!array<number>} args
+     *     Then size of monitors
      */
-    this.sendSize = function sendSize(width, height, monitors) {
+    this.sendSize = function sendSize(width, height, monitors, args) {
 
         // Do not send requests if not connected
         if (!isConnected())
             return;
 
-        tunnel.sendMessage("size", width, height, monitors);
-
+        if (args) {
+            tunnel.sendMessage("size", width, height, monitors, ...args);
+        } else {
+            tunnel.sendMessage("size", width, height, monitors);
+        }
     };
 
     /**
