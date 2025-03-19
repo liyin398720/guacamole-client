@@ -28,6 +28,7 @@ var Guacamole = Guacamole || {};
  * 
  * @constructor
  */
+
 Guacamole.Display = function() {
 
     /**
@@ -40,6 +41,12 @@ Guacamole.Display = function() {
     var displayHeight = 0;
     var displayMonitors = 1;
     var displayScale = 1;
+
+
+    var isMultiMonitor = false;
+    var monitorIndex = 0;
+    var monitorWidth = 0;
+    var monitorHeight = 0;
 
     // Create display
     var display = document.createElement("div");
@@ -538,6 +545,7 @@ Guacamole.Display = function() {
      *     The width of this display;
      */
     this.getWidth = function() {
+        if (isMultiMonitor) return monitorWidth;
         return displayWidth;
     };
 
@@ -548,6 +556,7 @@ Guacamole.Display = function() {
      *     The height of this display;
      */
     this.getHeight = function() {
+        if (isMultiMonitor) return monitorHeight;
         return displayHeight;
     };
 
@@ -770,8 +779,18 @@ Guacamole.Display = function() {
      *     The number of monitors.
      */
     this.updateMonitors = function updateMonitors(monitors) {
-        displayMonitors = monitors;
+        // displayMonitors = monitors;
     }
+
+    this.updateMonitorInfo = function updateMonitorInfo(index, width, height) {
+        monitorWidth = width;
+        monitorHeight = height;
+        monitorIndex = index;
+    }
+    this.setIsMultimonitor = function setIsMultimonitor(flag) {
+        isMultiMonitor = flag;
+    }
+
 
     /**
      * Changes the size of the given Layer to the given width and height.
@@ -790,13 +809,15 @@ Guacamole.Display = function() {
     this.resize = function(layer, width, height) {
         scheduleTask(function __display_resize() {
 
-            // Adjust width when using multiple monitors
-            width = width / displayMonitors;
-
             layer.resize(width, height);
 
             // Resize display if default layer is resized
             if (layer === default_layer) {
+
+                if (isMultiMonitor) {
+                    width = monitorWidth;
+                    height = monitorHeight;
+                }
 
                 // Update (set) display size
                 displayWidth = width;
@@ -902,9 +923,7 @@ Guacamole.Display = function() {
             image.onload = task.unblock;
             image.onerror = task.unblock;
             image.src = url;
-
         }
-
     };
 
     /**
